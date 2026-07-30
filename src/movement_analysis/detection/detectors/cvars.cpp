@@ -80,7 +80,7 @@ static_function localization::Text MustEqual(const char *cvar, double value, con
 
 static_global const char *cvarNames[] = {
 	// "m_yaw",       // Disabled: this was kick-only, but legitimate turn binds temporarily use high values.
-	"fps_max",        // Expected to stay at or above the server tick rate.
+	// "fps_max",        // Expected to stay at or above the server tick rate.
 	"sv_cheats",      // replicated
 	"sensitivity",    // capped (0.0001f => 8.0f)
 	"cl_showpos",     // cheat (default 0)
