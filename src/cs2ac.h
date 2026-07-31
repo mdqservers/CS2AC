@@ -77,7 +77,6 @@ public:
 	void ReloadConfig();
 	void OnConfigLoaded();
 	void CheckConfig() const;
-	void TestAnnouncement() const;
 	void TestWebhook();
 	void ReportConfigLoadTimeout();
 
