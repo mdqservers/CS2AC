@@ -270,12 +270,6 @@ CON_COMMAND(cs2ac_check_config, "Check the current CS2AC settings without changi
 	g_CS2AC.CheckConfig();
 }
 
-CON_COMMAND(cs2ac_test_announcement, "Show a harmless CS2AC chat and center-screen test")
-{
-	(void)args;
-	g_CS2AC.TestAnnouncement();
-}
-
 CON_COMMAND(cs2ac_webhook_test, "Send a harmless Discord webhook test")
 {
 	(void)args;
@@ -857,13 +851,6 @@ void CS2ACPlugin::CheckConfig() const
 		Msg("[CS2AC] Configuration check passed. Everything is ready.\n");
 	}
 }
-
-void CS2ACPlugin::TestAnnouncement() const
-{
-	Msg("[CS2AC] Running a harmless announcement test. No detection or punishment will be created.\n");
-	utils::AnnounceTest();
-}
-
 void CS2ACPlugin::TestWebhook()
 {
 	if (webhook)
