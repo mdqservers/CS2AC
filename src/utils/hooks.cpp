@@ -123,7 +123,7 @@ namespace
 		{
 			if (CS2AC_STREQ(pending.event->GetName(), "round_end") && ++completedRounds % watermarkRoundInterval == 0)
 			{
-				utils::AnnounceWatermark();
+				//utils::AnnounceWatermark();
 			}
 			g_CS2AC.OnGameEvent(pending.event, pending.player);
 			if (CS2AC_STREQ(pending.event->GetName(), "player_spawn") && pending.player)
