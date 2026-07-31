@@ -400,7 +400,7 @@ void utils::AnnounceDetection(const char *detection, const char *playerName, Det
 	ShowCenterMessage("<span class='fontSize-l'><span color='#FF0000'>[CS2AC]</span> <span color='#FFFFFF'>" + centerBody + "</span></span>", true);
 }
 
-void utils::AnnounceTest()
+/*void utils::AnnounceTest()
 {
 	static constexpr const char *text = "This is a test. No player was detected or punished.";
 	const std::string localized = localization::Get("announcement.test", text);
@@ -429,9 +429,9 @@ void utils::AnnounceTest()
 		Msg("[CS2AC] The center-screen test was skipped because center announcements are disabled.\n");
 	}
 	Msg("[CS2AC] Test announcement finished: %s\n", text);
-}
+}*/
 
-void utils::AnnounceWatermark()
+/*void utils::AnnounceWatermark()
 {
 	const std::string chatBody = localization::Watermark({{"author", "{grey}%s1{default}"}}).localized;
 	const std::string chatTemplate = "{red}[CS2AC]{default} " + chatBody;
@@ -446,7 +446,7 @@ void utils::AnnounceWatermark()
 	ReplaceAll(centerBody, "{author}", "<span color='#B0B0B0'>karola3vax</span>");
 	ShowCenterMessage("<span class='fontSize-l'><span color='#FF0000'>[CS2AC]</span> <span color='#FFFFFF'>" + centerBody + "</span></span>", false,
 					  true, 3);
-}
+}*/
 
 void utils::ResetDetectionAnnouncement()
 {
