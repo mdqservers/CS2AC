@@ -18,12 +18,12 @@ CConVar<bool> cs2ac_irregular_debug("cs2ac_irregular_debug", FCVAR_NONE, "Show I
 
 namespace
 {
-	constexpr int evidenceWindowSeconds = 10 * 60;
+	constexpr int evidenceWindowSeconds = 5 * 60;
 	constexpr float minimumDistance = 10.0f;
 	constexpr float longDistance = 20.0f;
 	constexpr int detectionScore = 16;
 	constexpr int minimumSuccesses = 3;
-	constexpr int minimumAttempts = 5;
+	constexpr int minimumAttempts = 4;
 	constexpr size_t pendingLimit = 8;
 
 	bool IsSniperWeapon(std::string_view weapon)

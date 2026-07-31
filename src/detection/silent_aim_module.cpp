@@ -17,10 +17,10 @@ CConVar<bool> cs2ac_silentaim_debug("cs2ac_silentaim_debug", FCVAR_NONE, "Show w
 
 namespace
 {
-	constexpr int detectionScore = 12;
-	constexpr auto evidenceWindow = std::chrono::minutes(10);
+	constexpr int detectionScore = 10;
+	constexpr int normalHitDecay = 2;
+	constexpr auto evidenceWindow = std::chrono::minutes(5);
 	constexpr float minimumAllowance = 1.0f;
-	constexpr float allowanceMargin = 0.5f;
 	constexpr float blatantExcess = 22.5f;
 } // namespace
 
@@ -63,8 +63,7 @@ namespace detection
 
 		constexpr float radiansToDegrees = static_cast<float>(180.0 / M_PI);
 		shot.silentAllowance =
-			(std::max)(minimumAllowance,
-					   static_cast<float>(std::atan(shot.silentInaccuracy + shot.silentSpread) * radiansToDegrees) + allowanceMargin);
+			(std::max)(minimumAllowance, static_cast<float>(std::atan(shot.silentInaccuracy + shot.silentSpread) * radiansToDegrees));
 		shot.silentDeviation = AngularDistance(shot.baseAngles, shot.angles);
 		if (!std::isfinite(shot.silentAllowance) || !std::isfinite(shot.silentDeviation))
 		{
@@ -105,26 +104,44 @@ namespace detection
 			return;
 		}
 
-		if (shot.silentDeviation <= shot.silentAllowance)
-		{
-			SILENTAIM_DEBUG("%s confirmed hit was normal: %.2f <= %.2f degrees.\n", player->GetName(), shot.silentDeviation, shot.silentAllowance);
-			return;
-		}
-
-		const float excess = shot.silentDeviation - shot.silentAllowance;
-		const std::string_view weapon = NormalizeWeapon(shot.weapon);
-		const bool noscope = !shot.scoped && (weapon == "awp" || weapon == "ssg08" || weapon == "g3sg1" || weapon == "scar20");
-		const int points = (excess > blatantExcess ? 3
-							: shot.airborne        ? 3
-												   : 2)
-						   + static_cast<int>(shot.headshot) + 2 * static_cast<int>(shot.wallbang) + 2 * static_cast<int>(shot.throughSmoke)
-						   + static_cast<int>(noscope);
 		const auto now = Clock::now();
 		auto &incidents = evidence[player->index];
 		while (!incidents.empty() && now - incidents.front().time >= evidenceWindow)
 		{
 			incidents.pop_front();
 		}
+
+		if (shot.silentDeviation <= shot.silentAllowance)
+		{
+			int remainingDecay = normalHitDecay;
+			while (remainingDecay > 0 && !incidents.empty())
+			{
+				const int applied = (std::min)(remainingDecay, incidents.back().points);
+				incidents.back().points -= applied;
+				remainingDecay -= applied;
+				if (incidents.back().points == 0)
+				{
+					incidents.pop_back();
+				}
+			}
+			int total = 0;
+			for (const auto &incident : incidents)
+			{
+				total += incident.points;
+			}
+			SILENTAIM_DEBUG("%s confirmed hit was normal: %.2f <= %.2f degrees; score decayed by %d to %d/%d.\n", player->GetName(),
+							shot.silentDeviation, shot.silentAllowance, normalHitDecay - remainingDecay, total, detectionScore);
+			return;
+		}
+
+		const float excess = shot.silentDeviation - shot.silentAllowance;
+		const std::string_view weapon = NormalizeWeapon(shot.weapon);
+		const bool noscope = !shot.scoped && (weapon == "awp" || weapon == "ssg08" || weapon == "g3sg1" || weapon == "scar20");
+		const int points = (excess > blatantExcess ? 4
+							: shot.airborne        ? 3
+												   : 2)
+						   + static_cast<int>(shot.headshot) + 2 * static_cast<int>(shot.wallbang) + 2 * static_cast<int>(shot.throughSmoke)
+						   + static_cast<int>(noscope);
 		incidents.push_back({now, points});
 
 		int total = 0;
